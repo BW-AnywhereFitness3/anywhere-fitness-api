@@ -1,2 +1,3 @@
 # anywhere-fitness-api
-node backend API for the Anywhere fitness React application
+
+# ENDPOINTS - Readmefile to be updated!
