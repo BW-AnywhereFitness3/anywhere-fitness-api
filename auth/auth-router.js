@@ -1,10 +1,14 @@
 const bcryptjs = require("bcryptjs");
-const jwt = require("jsonwebtoken"); // <<<<< install the library
+// const jwt = require("jsonwebtoken"); // <<<<< install the library
 
 const router = require("express").Router();
 
-// const Users = require("../users/users-model.js");
+const Users = require("../helpers/users-model");
 const { isValid, handleError, makeJwt} = require('../utils/services');
+
+router.get("/", (req, res) => {
+    res.status(200).json( {message: "nothing to see, please register" })
+})
 
 router.post("/register", (req, res) => {
     const credentials = req.body;

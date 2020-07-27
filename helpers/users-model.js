@@ -1,4 +1,4 @@
-const db = require("../database/connection.js");
+const db = require("../database/db-config");
 
 module.exports = {
     add,
@@ -33,5 +33,5 @@ async function add(user) {
 }
 
 function findById(id) {
-    return db("users").where({ id }).first();
+    return db("users as u").where({ id }).first().select("u.id", "u.role", "u.first_name", "u.last_name", "u.email", "u.username");
 }

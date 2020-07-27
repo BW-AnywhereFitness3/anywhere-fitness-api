@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken"); // <<<<< install the library
+
 module.exports = {
     handleError,
     isValid,
