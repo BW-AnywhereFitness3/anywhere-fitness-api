@@ -63,5 +63,5 @@
 ```
 
 ## GET list of sessions for logged in user
->- /api/client/classes/sessions
->  - Must be logged in as user
+> - /api/client/classes/sessions
+>   - Must be logged in as user
