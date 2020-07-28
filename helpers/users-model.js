@@ -71,9 +71,10 @@ function addSession(newSession) {
 }
 
 function findAllSessionsById(id) {
-    return db('select c.id, c.name, c.instructor_id, c.type, c.start_time, c.duration, c.intensity_level, c.address, c.city, c.postal, c.current_attendees, c.max_class')
-    .from('sessions as s')
-    .join('classes as c on s.classes_id = c.id')
+    return db('sessions as s')
+    .select('c.id', 'c.name', 'c.instructor_id', 'c.type', 'c.start_time', 'c.duration', 'c.intensity_level', 'c.address', 'c.city', 'c.postal', 'c.current_attendees', 'c.max_class')
+    // .from('sessions as s')
+    .join('classes as c', 's.classes_id', 'c.id')
     .where('s.users_id', id)
 
     // return db('c')

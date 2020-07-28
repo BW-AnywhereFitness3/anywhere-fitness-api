@@ -46,6 +46,7 @@ router.get('/classes/sessions', (req, res) => {
         res.status(200).json({ classes, message: "all classes for logged user" })
     })
     .catch(err => {
+        console.log(err)
         res.status(500).json({ errMessage: "Internal error, could not get data" })
     })
 })
