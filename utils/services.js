@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken"); // <<<<< install the library
+let constant = require('../config/constants');
 
 module.exports = {
     handleError,
@@ -22,7 +23,7 @@ function isValid(user) {
         role: user.role,
     };
 
-    const secret = process.env.JWT_SECRET || "is it secret, is it safe?";
+    const secret = constant.jwtSecret;
 
     const options = {
         expiresIn: "1h",

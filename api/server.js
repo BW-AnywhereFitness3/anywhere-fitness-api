@@ -6,6 +6,9 @@ let express = require("express"),
 let authRouter = require("../auth/auth-router");
 let clientRouter = require("../users/client-router");
 let restricted = require("../auth/restricted-middleware");
+let instructorRouter = require("../users/instructor-router");
+let roleCheck = require('../auth/check-role');
+const checkRole = require("../auth/check-role");
 
 let server = express(); // server using express
 // middleware
@@ -16,6 +19,7 @@ server.use(express.json()); // for using json to communicate with db and client
 // auth endpoint
 server.use("/api/auth", authRouter);
 server.use("/api/client", restricted, clientRouter);
+server.use("/api/instructor", restricted, checkRole('instructor'), instructorRouter)
 
 // base endpoint
 server.get("/", (req, res) => {

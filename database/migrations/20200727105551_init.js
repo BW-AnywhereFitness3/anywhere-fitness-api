@@ -35,13 +35,17 @@ exports.up = function(knex) {
         tbl.string("start_time", 128).notNullable()
         tbl.integer("duration", 128).notNullable()
         tbl.integer("intensity_level").notNullable()
-        tbl.string("location", 128).notNullable()
+        tbl.string("address", 128).notNullable()
+        tbl.string("city", 128).notNullable()
+        tbl.integer("postal").notNullable()
         tbl.integer("current_attendees").nullable()
         tbl.integer("max_class").notNullable();
 
     })
 
     .createTable("sessions", tbl => {
+        tbl
+            .increments();
         tbl
             .integer("users_id")
             .unsigned()
@@ -54,6 +58,7 @@ exports.up = function(knex) {
             .references("classes.id")
             .onDelete("RESTRICT")
             .onUpdate("CASCADE");
+        tbl.string("joined", 128).notNullable();
     })
 
 };

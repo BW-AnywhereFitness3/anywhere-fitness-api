@@ -24,12 +24,12 @@ router.post("/register", (req, res) => {
         // save the user to the database
         Users.add(credentials)
             .then(user => {
-                const token = makeJwt(user);
+                // const token = makeJwt(user);
 
-                res.status(201).json({ data: user, token });
+                res.status(201).json({ data: user, message: "role: 1=instructor 2=client" });
             })
             .catch(error => {
-                res.status(500).json({ message: error.message });
+                res.status(500).json({ message: "Credentials must be unique", error });
             });
     } else {
         res.status(400).json({
@@ -44,7 +44,10 @@ router.post("/login", (req, res) => {
     if (isValid(req.body)) {
         Users.findBy({ username: username })
             .then(([user]) => {
-                console.log("user", user);
+                // console.log("user", user);
+                // if(user.username === 'jen' || 'cameron' || 'nicole' || 'harper' || 'elisa' || 'fernando' || 'anywhere'){
+                //     res.status(200).json({ message: "logged in" });
+                // } else {}
                 // compare the password the hash stored in the database
                 if (user && bcryptjs.compareSync(password, user.password)) {
                     const token = makeJwt(user);
