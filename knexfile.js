@@ -34,12 +34,14 @@ module.exports = {
 
   production: {
     client: 'sqlite3',
+    useNullAsDefault: true,
     connection: {
       filename: './database/fitness.db3'
     },
     pool: {
-      min: 2,
-      max: 10
+      afterCreate: (conn, done) => {
+        conn.run("PRAGMA foreign_keys = ON", done);
+      },
     },
     migrations: {
       directory: "./database/migrations",

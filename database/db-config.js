@@ -1,6 +1,8 @@
 let knex = require("knex");
 let knexfile = require("../knexfile");
 
-let configuration = knexfile.development;
+let environment = process.env.NODE_ENV || 'development';
 
-module.exports = knex(configuration);
+// let configuration = knexfile.development;
+
+module.exports = knex(knexfile[environment]);
