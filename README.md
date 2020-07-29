@@ -38,6 +38,14 @@ postal | integer | required
 current_attendees | integer | required
 max_class | integer | required
 
+### Sessions
+Name| Data Type | Metadata
+------------ | ------------- | --------
+id | integer | primary key, auto increments, auto generates
+users_id | integer | f/k, auto assigned by being logged in
+classes_id | integer | required, f/k
+joined | string | auto generated
+
 
 ### **** All endpoints besides register/login require req.header with Authorization Token ****
 
