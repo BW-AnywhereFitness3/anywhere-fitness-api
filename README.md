@@ -51,6 +51,7 @@ joined | string | auto generated
 
 ## REGISTER
 > - .POST to /api/auth/register
+
 Requires:
 ```js
 { 
