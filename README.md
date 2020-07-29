@@ -51,7 +51,7 @@ Responds:
 }
 ```
 
-## GET list of all classes for client
+## GET list of all classes available for client
 > * .GET to /api/client/classes
 >   * Need to be logged in as client
 >   * Client can view all available classes.
@@ -60,7 +60,7 @@ Responds:
 Responds:
 ```
 {
-    data: [
+    data: [ 
         {
             id: num,
             instructor_id: num,
@@ -79,7 +79,7 @@ Responds:
 }
 ```
 
-## GET list of classes for client by id
+## GET Class available for client by id
 > * .GET to /api/client/classes/:id
 >   * Need to be logged in as client
 >   * dynamic params :id
