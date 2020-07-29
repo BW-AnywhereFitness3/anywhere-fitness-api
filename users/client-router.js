@@ -41,9 +41,29 @@ router.post("/classes/sessions", (req, res) => {
 
 router.get('/classes/sessions', (req, res) => {
     let userID = req.jwt.subject;
-    DB.findAllSessionsById(userID)
+    DB.findAllSessionsByClientId(userID)
     .then(classes => {
         res.status(200).json({ classes, message: "all classes for logged user" })
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({ errMessage: "Internal error, could not get data" })
+    })
+})
+
+router.get('/classes/sessions/:id', (req, res) => {
+    let { id } = req.params;
+    let userID = req.jwt.subject;
+    console.log(userID)
+    DB.findSessionById(id)
+    .then(session => {
+        console.log(session)
+        console.log(session.users_id)
+        if(session.users_id === userID) {
+            res.status(200).json({ session, message: "Session for logged user" })
+        } else {
+            res.status(404).json({ message: "no session found for current logged user" })
+        }
     })
     .catch(err => {
         console.log(err)
@@ -65,5 +85,75 @@ router.get('/classes/:id', (req, res) => {
         res.status(400).json({ error: "id must be a number" })
     }
 })
+
+router.delete('/classes/sessions/:id', (req, res) => {
+    let { id } = req.params;
+    let userID = req.jwt.subject;
+    console.log(userID)
+    DB.findSessionById(id)
+    .then(session => {
+        console.log(session)
+        console.log(session.users_id)
+        if(session.users_id === userID) {
+            DB.removeSessionById(id)
+            .then(count => {
+                if(count > 0) {
+                    res.status(200).json({ message: `successfully deleted session with id ${id}` })
+                } else {
+                    res.status(500).json({ errMessage: `could not delete session with id ${id}` })
+                }
+            })
+        } else {
+            res.status(404).json({ message: `no session with id ${id} found for current logged user ` })
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({ errMessage: "Internal error, could not get data" })
+    })
+});
+
+router.put('/classes/sessions/:id', (req, res) => {
+    let { id } = req.params;
+    let subject = req.jwt.subject;
+    let changes = req.body;
+
+    if(changes.classes_id){
+        DB.findSessionById(id)
+        .then(session => {
+            if(session){
+                if(session.users_id === subject){
+                    DB.updateSessionById(id, changes)
+                    .then(count => {
+                        if(count === 1) {
+                            DB.findSessionById(id)
+                            .then(updatedSession => {
+                                res.status(200).json({ success: `successfully updated session with id ${id}`, updated: updatedSession })
+                            })
+                            .catch(err => {
+                                res.status(500).json({ errMessage: "Internal server error finding updated session" })
+                            })
+                        } else {
+                            res.status(400).json({ errMessage: "Could not update class" })
+                        }
+                    })
+                    .catch(err => {
+                        res.status(500).json({ errMessage: "Internal server error updating class" })
+                    })
+                } else {
+                    res.status(401).json({ errMessage: "Not authorized, this session is not assigned to this client" })
+                }
+            } else {
+                res.status(404).json({ errMessage: "No session found with requested id"})
+            }
+        })
+        .catch(err => {
+            res.status(500).json({ errMessage: "Internal server error finding session" })
+        })
+    } else {
+        res.status(400).json({ message: "classes id is required" })
+    }
+
+});
 
 module.exports = router;

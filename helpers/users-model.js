@@ -7,12 +7,16 @@ module.exports = {
     findBy,
     findById,
     findAllClasses,
-    findAllClassesById,
+    findAllClassesByInstructorId,
     findClassById,
     addClass,
     findSessionById,
     addSession,
-    findAllSessionsById,
+    findAllSessionsByClientId,
+    removeClassById,
+    updateClassById,
+    removeSessionById,
+    updateSessionById,
 };
 
 function find() {
@@ -58,8 +62,11 @@ function findAllClasses() {
 
 function findSessionById(id) {
     return db('sessions as s')
-        .where({id})
-        .first()
+    .select('s.id as session_id', 's.users_id', 's.classes_id', 'c.name', 'c.instructor_id', 'c.type', 'c.start_time', 'c.duration', 'c.intensity_level', 'c.address', 'c.city', 'c.postal', 'c.current_attendees', 'c.max_class')
+    // .from('sessions as s')
+    .join('classes as c', 's.classes_id', 'c.id')
+    .where('s.id', id)
+    .first()
 }
 
 function addSession(newSession) {
@@ -70,9 +77,9 @@ function addSession(newSession) {
         })
 }
 
-function findAllSessionsById(id) {
+function findAllSessionsByClientId(id) { // of the logged in client taken from decodedToken
     return db('sessions as s')
-    .select('c.id', 'c.name', 'c.instructor_id', 'c.type', 'c.start_time', 'c.duration', 'c.intensity_level', 'c.address', 'c.city', 'c.postal', 'c.current_attendees', 'c.max_class')
+    .select('s.id as sessionID', 's.users_id', 's.classes_id', 'c.name', 'c.instructor_id', 'c.type', 'c.start_time', 'c.duration', 'c.intensity_level', 'c.address', 'c.city', 'c.postal', 'c.current_attendees', 'c.max_class')
     // .from('sessions as s')
     .join('classes as c', 's.classes_id', 'c.id')
     .where('s.users_id', id)
@@ -83,12 +90,26 @@ function findAllSessionsById(id) {
     // .where('s.users_id', id)
     // .select('select c.id, c.name, c.instructor_id, c.type, c.start_time, c.duration, c.intensity_level, c.address, c.city, c.postal, c.current_attendees, c.max_class')
 }
+
+function removeSessionById(id) {
+    return db('sessions')
+    .where('id', id)
+    .del();
+}
+
+function updateSessionById(id, updatedSession) {
+    return db('sessions')
+        .where('id', id)
+        .update(updatedSession)
+}
+
 // =================== INSTRUCTORS ===============================
-function findAllClassesById(id) {
+function findAllClassesByInstructorId(id) { // of the logged in instructor taken from decodedToken
     return db('classes as c')
         .where('c.instructor_id', id)
-        .orderBy('name', 'desc')
+        .orderBy('id', 'asc')
 }
+
 
 function findClassById(id) {
     return db('classes')
@@ -102,4 +123,16 @@ function addClass(newClass) {
         .then(([id]) => {
             return findClassById(id)
         })
+}
+
+function removeClassById(id) {
+    return db('classes')
+    .where('id', id)
+    .del();
+}
+
+function updateClassById(id, updatedClass) {
+    return db('classes')
+        .where('id', id)
+        .update(updatedClass)
 }

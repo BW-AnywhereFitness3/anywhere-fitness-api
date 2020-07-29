@@ -2,6 +2,7 @@
 let express = require("express"),
     cors = require("cors"),
     helmet = require("helmet");
+    // morgan = require("morgan");
 
 let authRouter = require("../auth/auth-router");
 let clientRouter = require("../users/client-router");
@@ -14,7 +15,9 @@ let server = express(); // server using express
 // middleware
 server.use(cors());
 server.use(helmet());
+// server.use(morgan("combined"));
 server.use(express.json()); // for using json to communicate with db and client
+
 
 // auth endpoint
 server.use("/api/auth", authRouter);
