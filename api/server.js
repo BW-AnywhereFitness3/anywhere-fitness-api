@@ -1,7 +1,7 @@
 // Initial server requirements
-let express = require("express"),
-    cors = require("cors"),
-    helmet = require("helmet");
+let express = require("express");
+const cors = require("cors");
+const helmet = require("helmet");
     // morgan = require("morgan");
 
 let authRouter = require("../auth/auth-router");
