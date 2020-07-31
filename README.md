@@ -161,7 +161,7 @@ Responds:
         {
             sessionID: num,
             users_id: num,
-            classes_id: num
+            classes_id: num,
             name: string,
             instructor_id: num,
             type: string,
