@@ -35,8 +35,8 @@ router.post("/classes", (req, res) => {
     let newClass = req.body;
     let subject = req.jwt.subject;
 
-    if(!newClass.name || !newClass.type || !newClass.start_time || !newClass.duration) {
-    res.status(400).json({ message: "all fields required", data: newClass })
+    if(!newClass.name || !newClass.type || !newClass.start_time || !newClass.duration || !newClass.intensity_level || !newClass.address || !newClass.city || !newClass.postal || !newClass.max_class || newClass.id) {
+    res.status(400).json({ message: "all fields required: name, type, start_time, duration, intensity_level, address, city, postal, current_attendees, max_clas only", data: newClass })
     } else {
         newClass.instructor_id = subject
         DB.addClass(newClass)
@@ -48,42 +48,69 @@ router.post("/classes", (req, res) => {
 
 router.delete('/classes/:id', (req, res) => {
     let { id } = req.params;
-    let subject = req.jwt.subject;
-
-    DB.findAllClassesByInstructorId(subject)
-    .then(returnedArray => {
-        if(returnedArray.length >= 1) {
-            
-            let arr = returnedArray.filter(filtered => {
-                return filtered.id === Number(id)
+    let instructorID = req.jwt.subject;
+    console.log(instructorID)
+    DB.findClassById(id)
+    .then(returnedClass => {
+        // console.log(returnedClass)
+        // console.log(returnedClass.users_id)
+        if(returnedClass.instructor_id === instructorID) {
+            DB.removeClassById(id)
+            .then(count => {
+                if(count > 0) {
+                    res.status(200).json({ message: `successfully deleted class with id ${id}` })
+                } else {
+                    res.status(500).json({ errMessage: `could not delete class with id ${id}` })
+                }
             })
-
-            if(arr) {
-            let getObjectId = arr[0].id
-
-                DB.removeById(getObjectId)
-                .then(removedID => {
-                    if(removedID > 0){
-                        res.status(200).json({ message: `successfully removed class with id ${id}`})
-                    } else {
-                        res.status(500).json({ errMessage: "could not delete class" })
-                    }
-                })
-                .catch(err => {
-                    res.status(500).json({ errMessage: "could not process request" })
-                })
-            } else {
-                res.status(404).json({ message: "class with said id does not exist" })
-            }
         } else {
-            res.status(404).json({ message: "class with said id cannot be found" })
-
+            res.status(404).json({ message: `no class with id ${id} found for current logged user ` })
         }
     })
     .catch(err => {
-        res.status(500).json({ err, errMessage: "could not find classes"})
+        console.log(err)
+        res.status(500).json({ errMessage: "Internal error, could not get data" })
     })
-})
+});
+
+// router.delete('/classes/:id', (req, res) => {
+//     let { id } = req.params;
+//     let subject = req.jwt.subject;
+
+//     DB.findAllClassesByInstructorId(subject)
+//     .then(returnedArray => {
+//         if(returnedArray.length >= 1) {
+            
+//             let arr = returnedArray.filter(filtered => {
+//                 return filtered.id === Number(id)
+//             })
+
+//             if(arr) {
+//             let getObjectId = arr[0].id
+
+//                 DB.removeById(getObjectId)
+//                 .then(removedID => {
+//                     if(removedID > 0){
+//                         res.status(200).json({ message: `successfully removed class with id ${id}`})
+//                     } else {
+//                         res.status(500).json({ errMessage: "could not delete class" })
+//                     }
+//                 })
+//                 .catch(err => {
+//                     res.status(500).json({ errMessage: "could not process request" })
+//                 })
+//             } else {
+//                 res.status(404).json({ message: "class with said id does not exist" })
+//             }
+//         } else {
+//             res.status(404).json({ message: "class with said id cannot be found" })
+
+//         }
+//     })
+//     .catch(err => {
+//         res.status(500).json({ err, errMessage: "could not find classes"})
+//     })
+// })
 
 router.put('/classes/:id', (req, res) => {
     let { id } = req.params;
